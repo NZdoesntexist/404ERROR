@@ -12,6 +12,21 @@
     .screen{background:#000;color:#fff;font-family:'DOS VGA',monospace;height:100%;padding:10px;position:relative;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
     .bios-text,.error-message,.captcha-instructions{font-size:14px;line-height:1.4}.blink{animation:bl 1s infinite}.@keyframes bl{0%,49%{opacity:1}50%,100%{opacity:0}}.error-header{font-size:24px;margin-bottom:10px;animation:pulse 1.5s infinite alternate;color:#f00}@keyframes pulse{from{opacity:.7}to{opacity:1}}.glitch{color:#0f0;animation:glitch 3s infinite}@keyframes glitch{0%{t:0}2%{t:-2px -2px}4%{t:2px 2px}6%{t:-2px 2px}8%{t:2px -2px}10%{t:0}100%{t:0};t:transform}.robot-face{width:160px;height:100px;image-rendering:pixelated}.btn-primary,.btn-cancel,.btn-fate,.btn-share,.btn-next,.btn-retry,.btn-surrender{padding:8px 16px;font:'DOS VGA',monospace;cursor:pointer;border:2px solid #00aaff}.btn-primary{background:#00f;color:#fff}.btn-cancel{background:#333;color:#ccc}.btn-fate{background:#000;color:#0f0;border:1px dashed #0f0;animation:bf 2s infinite}.@keyframes bf{0%,49%{opacity:.6}50%,100%{opacity:1}}.popup-alert{position:fixed;top:20vh;left:50%;transform:translateX(-50%);width:300px;background:linear-gradient(#f00,#a00);border:3px solid yellow;z-index:1000;font-size:12px;color:#fff;border-radius:8px;box-shadow:0 0 20px yellow}.popup-title{background:#000;color:yellow;padding:5px;text-align:center}.popup-body{text-align:center;padding:15px}.popup-close{padding:5px 10px;background:#000;color:#fff;border:1px solid #fff;cursor:pointer}.captcha-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:90%;max-width:600px;margin:20px auto}.captcha-item{aspect-ratio:1;background:#111;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:10px;color:#f00;cursor:pointer;padding:5px}.rebuild-header{font-size:16px;color:#ff0;text-align:center;margin:10px}.robot-bench{flex-grow:1;background:#222;border:2px solid #444;position:relative;width:520px;height:400px;margin:auto;overflow:hidden}.part-zone{position:absolute;border:1px dashed rgba(0,255,0,.4);pointer-events:none;z-index:1}.parts-bin{display:flex;justify-content:center;gap:10px;margin:10px;flex-wrap:wrap;position:relative;z-index:1}.draggable-part{width:60px;height:auto;cursor:grab;image-rendering:pixelated;transition:scale .1s}.draggable-part:hover{scale:1.1}.robot-face-large{width:200px;height:125px;image-rendering:pixelated}.flames::after{content:'🔥🔥🔥';font-size:30px;position:absolute;top:-30px;left:50%;transform:translateX(-50%);animation:fl 0.5s infinite alternate}@keyframes fl{0%{opacity:.4}100%{opacity:1}}.result-header{font-size:24px;margin:10px}.result-message{font-size:16px;line-height:1.5}.result-actions{display:flex;flex-direction:column;gap:10px}.btn-share{background:#1da1f2;color:#fff;border-color:#1a95da}.btn-next,.btn-retry{background:#00f;color:#fff;border-color:#00aaff}.btn-surrender{background:#333;color:#ccc;border-color:#666}.tiny{font-size:10px;color:#555}.fake-delete{background:#000;color:#ff0;padding:20px;text-align:center;font-size:16px;line-height:2}
   </style>
+  /* === GLITCH EFFECT (NO GIF NEEDED) === */
+.glitch-effect {
+  animation: glitch-flicker 0.5s infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 90%, 100% { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+  91%, 95%, 98% { 
+    opacity: 0.3; 
+    transform: translateX(1px); 
+  }
+}
 </head>
 <body class="crt-screen" id="b">
   <div id="c"></div>
