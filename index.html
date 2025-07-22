@@ -122,6 +122,7 @@ WINLOGON.EXE: Starting...
               if(placed.size===6){clearInterval(T);setTimeout(()=>go(G.SUCCESS),1000);}
             } else {img.style.cssText='';bin.appendChild(img);}
             img.style.opacity='1';
+            <img src="assets/images/robot/face-neutral.png" id="rf">
           });
         });
 
@@ -161,6 +162,13 @@ document.getElementById('rf').style.filter = 'hue-rotate(90deg)'; // green → y
         document.getElementById('gu').onclick=()=>{c.innerHTML='<div class="fake-delete"><p>Deleting user profile...</p><p>Erasing browser history...</p><p>Selling data to advertisers... ✔</p><p><i>Just kidding. You\'re still a bot.</i></p></div>';setTimeout(()=>go(G.BOOT),2000);};
         break;
     }}
+
+    // Make the robot face glitch for 500ms
+const face = document.getElementById('robot-face') || document.getElementById('rf');
+face.classList.add('glitch-effect');
+setTimeout(() => {
+  face.classList.remove('glitch-effect');
+}, 500);
 
     // === AUDIO ===
     let mA;function initA(){mA=new Audio('assets/sounds/modem-loop.mp3');mA.loop=true;mA.volume=.1;const p=()=>{mA.play().catch(()=>{});document.removeEventListener('click',p);};document.addEventListener('click',p);document.addEventListener('keydown',p);}initA();
