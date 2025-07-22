@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404CAPTCHA</title>
+  <link href="https://fonts.googleapis.com/css2?family=DOS+VGA&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:'DOS VGA',monospace;background:#0d0d0d;color:#0f0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none}#c{width:640px;height:480px;background:#000;border:8px solid #333;position:relative;overflow:hidden;box-shadow:0 0 20px rgba(0,255,0,.1)}#c::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,rgba(0,255,0,.03),rgba(0,255,0,.03)1px,transparent 1px,transparent 2px);pointer-events:none;z-index:100;opacity:.15;animation:f 6s infinite alternate,s 2s linear infinite}@keyframes f{0%,98%{opacity:.12}99%{opacity:.2}}@keyframes s{0%{background-position:0 0}100%{background-position:0 2px}}body::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at center,transparent 40%,#000 90%);pointer-events:none;z-index:99}
+    
+    /* Screen Base */
+    .screen{background:#000;color:#fff;font-family:'DOS VGA',monospace;height:100%;padding:10px;position:relative;display:flex;flex-direction:column;justify-content:space-between;text-align:center}
+    .bios-text,.error-message,.captcha-instructions{font-size:14px;line-height:1.4}.blink{animation:bl 1s infinite}@keyframes bl{0%,49%{opacity:1}50%,100%{opacity:0}}.error-header{font-size:24px;margin-bottom:10px;animation:pulse 1.5s infinite alternate;color:#f00}@keyframes pulse{from{opacity:.7}to{opacity:1}}.glitch{color:#0f0;animation:glitch 3s infinite}@keyframes glitch{0%{t:0}2%{t:-2px -2px}4%{t:2px 2px}6%{t:-2px 2px}8%{t:2px -2px}10%{t:0}100%{t:0};t:transform}.robot-face{width:160px;height:100px;image-rendering:pixelated}.btn-primary,.btn-cancel,.btn-fate,.btn-share,.btn-next,.btn-retry,.btn-surrender{padding:8px 16px;font:'DOS VGA',monospace;cursor:pointer;border:2px solid #00aaff}.btn-primary{background:#00f;color:#fff}.btn-cancel{background:#333;color:#ccc}.btn-fate{background:#000;color:#0f0;border:1px dashed #0f0;animation:bf 2s infinite}@keyframes bf{0%,49%{opacity:.6}50%,100%{opacity:1}}.popup-alert{position:fixed;top:20vh;left:50%;transform:translateX(-50%);width:300px;background:linear-gradient(#f00,#a00);border:3px solid yellow;z-index:1000;font-size:12px;color:#fff;border-radius:8px;box-shadow:0 0 20px yellow}.popup-title{background:#000;color:yellow;padding:5px;text-align:center}.popup-body{text-align:center;padding:15px}.popup-close{padding:5px 10px;background:#000;color:#fff;border:1px solid #fff;cursor:pointer}.captcha-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:90%;max-width:600px;margin:20px auto}.captcha-item{aspect-ratio:1;background:#111;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:10px;color:#f00;cursor:pointer;padding:5px}.rebuild-header{font-size:16px;color:#ff0;text-align:center;margin:10px}.robot-bench{flex-grow:1;background:#222;border:2px solid #444;position:relative;width:520px;height:400px;margin:auto;overflow:hidden}.part-zone{position:absolute;border:1px dashed rgba(0,255,0,.4);pointer-events:none;z-index:1}.parts-bin{display:flex;justify-content:center;gap:10px;margin:10px;flex-wrap:wrap;position:relative;z-index:1}.draggable-part{width:60px;height:auto;cursor:grab;image-rendering:pixelated;transition:scale .1s}.draggable-part:hover{scale:1.1}.result-header{font-size:24px;margin:10px}.result-message{font-size:16px;line-height:1.5}.result-actions{display:flex;flex-direction:column;gap:10px}.btn-share{background:#1da1f2;color:#fff;border-color:#1a95da}.btn-next,.btn-retry{background:#00f;color:#fff;border-color:#00aaff}.btn-surrender{background:#333;color:#ccc;border-color:#666}.tiny{font-size:10px;color:#555}.fake-delete{background:#000;color:#ff0;padding:20px;text-align:center;font-size:16px;line-height:2}
+
+    /* === GLITCH EFFECT (NO IMAGE NEEDED) === */
+    .glitch-effect {
+      animation: glitch-flicker 0.5s infinite;
+    }
+    @keyframes glitch-flicker {
+      0%, 90%, 100% { opacity: 1; transform: translateX(0); }
+      91%, 95%, 98% { opacity: 0.3; transform: translateX(1px); }
+    }
+  </style>
+</head>
+<body class="crt-screen">
+  <div id="c"></div>
+
+  <script>
+    // === GAME STATE ===
+    const G = { BOOT: 'boot', ERROR: 'error', CAPTCHA: 'captcha', REBUILD: 'rebuild', SUCCESS: 'success', FAILURE: 'failure' };
+    let S = G.BOOT;
+    const c = document.getElementById('c');
+
+    // Go to screen
+    const go = (state) => {
+      S = state;
+      switch (state) {
+        case G.BOOT:
+          r(`<div class="screen"><pre class="bios-text">ROM BIOS VERSION 2.02
+Copyright © 1997 Cursed Technologies Inc.
+All rights reserved.
+
+Initializing Hardware...
+ - CPU: Intel Pentium II 300MHz ✔
+ - Memory: 64MB EDO DRAM ✔
+ - Video: S3 Virge DX (640x480) ✔
+ - HDD: Quantum Fireball 4.3GB ✔
+ - Network: 56k Modem (Not Connected) ⚠
+
+Loading drivers...
+ - HIMEM.SYS ✔
+ - EMM386.EXE ✔
+ - MOUST.SYS ❌ FAILED (Mouse not found)
+ - IRONY.VXD ✔ (v4.0.666)
+
+Starting Windows 95...
+KERNEL32.DLL: Loaded
+USER32.DLL: Loaded
+GDI.EXE: Loaded
+WINLOGON.EXE: Starting...
+
+<span class="blink">Press ANY KEY to continue...</span></pre></div>`);
+          c.onclick = () => go(G.ERROR);
+          break;
+
+        case G.ERROR:
+          r(`<div class="screen error-screen">
+            <div class="error-header">⚠ SYSTEM ALERT ⚠</div>
+            <div class="error-message">
+              <p>CRITICAL INTRUSION DETECTED</p>
+              <p>Identity: <span class="glitch">UNKNOWN HUMAN OR BOT</span></p>
+              <p>Status: <span class="alert">UNVERIFIED</span></p>
+            </div>
+            <div class="robot-container">
+              <img src="assets/images/robot/face-neutral.png" alt="Robot Face" class="robot-face" id="rf">
+            </div>
+            <div class="error-footer">
+              <p>To proceed, prove you are NOT a bot.</p>
+              <button class="btn-primary" id="vb">VERIFY NOW</button>
+              <p class="small-text">Warning: Bots may experience existential dread.</p>
+            </div>
+          </div>`);
+          document.getElementById('vb').onclick = () => go(G.CAPTCHA);
+
+          // Random glitch on face
+          setInterval(() => {
+            if (Math.random() < 0.02) {
+              const f = document.getElementById('rf');
+              f.classList.add('glitch-effect');
+              setTimeout(() => f.classList.remove('glitch-effect'), 500);
+            }
+          }, 1000);
+          break;
+
+        case G.CAPTCHA:
+          let pC = 0;
+          r(`<div class="screen captcha-screen">
+            <div class="captcha-header">🔍 PROVE YOU'RE NOT A BOT</div>
+            <div class="captcha-instructions">Select all images containing:<br><strong>"EXISTENTIAL DREAD"</strong></div>
+            <div class="captcha-grid" id="cg"></div>
+            <div class="captcha-footer">
+              <button class="btn-primary" id="ok">OK</button>
+              <button class="btn-cancel" id="cn">Cancel</button>
+            </div>
+            <div class="hidden-button" id="fb" style="display:none;">
+              <button class="btn-fate" id="af">I accept my fate.</button>
+            </div>
+          </div>`);
+          const grid = document.getElementById('cg');
+          const labels = ["A fax machine dying", "Your savings account", "The void", "Corporate synergy", "Loading... forever", "A printer at 3 AM", "This website", "Your browser history"];
+          for (let i = 0; i < 8; i++) {
+            const I = document.createElement('div');
+            I.className = 'captcha-item';
+            I.textContent = labels[i];
+            I.onclick = spawnPopup;
+            grid.appendChild(I);
+          }
+          document.getElementById('ok').onclick = spawnPopup;
+          document.getElementById('cn').onclick = spawnPopup;
+          document.getElementById('af').onclick = () => go(G.REBUILD);
+
+          function spawnPopup() {
+            pC++;
+            const P = document.createElement('div');
+            P.className = 'popup-alert';
+            P.innerHTML = `<div class="popup-title">⚠ Ad ${pC} of ???</div>
+                           <div class="popup-body"><p>YOU WON A FREE IPHONE!</p><p>SCAN YOUR FACE TO CLAIM</p><button class="popup-close">CLOSE ×</button></div>`;
+            document.body.appendChild(P);
+            P.querySelector('.popup-close').onclick = () => document.body.removeChild(P);
+            if (pC >= 4) document.getElementById('fb').style.display = 'block';
+
+            // Glitch robot face
+            const f = document.getElementById('rf');
+            f.classList.add('glitch-effect');
+            setTimeout(() => f.classList.remove('glitch-effect'), 500);
+
+            // Play synthetic beep
+            beep(200, 0.05);
+          }
+          break;
+
+        case G.REBUILD:
+          let tL = 30, T;
+          r(`<div class="screen rebuild-screen">
+            <div class="rebuild-header">⏱️ TIME LEFT: <span id="timer">${tL}</span>s</div>
+            <div class="robot-bench" id="bench">
+              <div class="part-zone" data-part="head" style="top:80px;left:240px;width:120px;height:80px;"></div>
+              <div class="part-zone" data-part="body" style="top:160px;left:220px;width:160px;height:100px;"></div>
+              <div class="part-zone" data-part="arm-left" style="top:170px;left:140px;width:70px;height:90px;"></div>
+              <div class="part-zone" data-part="arm-right" style="top:170px;left:390px;width:70px;height:90px;"></div>
+              <div class="part-zone" data-part="leg-left" style="top:260px;left:230px;width:70px;height:100px;"></div>
+              <div class="part-zone" data-part="leg-right" style="top:260px;left:320px;width:70px;height:100px;"></div>
+            </div>
+            <div class="parts-bin" id="pb"></div>
+            <div class="robot-face-container">
+              <img src="assets/images/robot/face-neutral.png" id="rf" class="robot-face">
+            </div>
+            <div class="console-log" id="cl">SYSTEM: Begin reconstruction...</div>
+          </div>`);
+
+          const parts = ['head','body','arm-left','arm-right','leg-left','leg-right'];
+          const bin = document.getElementById('pb');
+          parts.forEach(p => {
+            const img = document.createElement('img');
+            img.src = `assets/images/robot/${p}.png`;
+            img.dataset.part = p;
+            img.className = 'draggable-part';
+            img.draggable = true;
+            bin.appendChild(img);
+
+            img.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', p); img.style.opacity = '.5'; });
+            img.addEventListener('dragend', () => img.style.opacity = '1' );
+
+            // Touch support
+            let tOffX, tOffY;
+            img.addEventListener('touchstart', e => {
+              const t = e.touches[0];
+              tOffX = t.clientX - img.getBoundingClientRect().left;
+              tOffY = t.clientY - img.getBoundingClientRect().top;
+              img.style.opacity = '.5';
+              e.preventDefault();
+            }, { passive: false });
+
+            img.addEventListener('touchmove', e => {
+              e.preventDefault();
+              const t = e.touches[0];
+              img.style.position = 'absolute';
+              img.style.left = `${t.clientX - tOffX}px`;
+              img.style.top = `${t.clientY - tOffY}px`;
+              img.style.zIndex = '1000';
+            }, { passive: false });
+
+            img.addEventListener('touchend', e => {
+              const t = e.changedTouches[0];
+              const el = document.elementFromPoint(t.clientX, t.clientY);
+              const zone = el?.closest(`.part-zone[data-part="${p}"]`);
+              const placedSet = window.placedParts || new Set();
+
+              if (zone && !placedSet.has(p)) {
+                img.style.position = ''; img.style.pointerEvents = 'none';
+                zone.appendChild(img);
+                placedSet.add(p);
+                window.placedParts = placedSet;
+
+                logMsg(p);
+                if (placedSet.size === 6) {
+                  clearInterval(T);
+                  setTimeout(() => go(G.SUCCESS), 1000);
+                }
+              } else {
+                img.style.cssText = '';
+                bin.appendChild(img);
+              }
+              img.style.opacity = '1';
+            });
+          });
+
+          const zones = document.querySelectorAll('.part-zone');
+          window.placedParts = new Set();
+
+          const logMsg = (type) => {
+            const m = {
+              head: "Head online. Still judging you.",
+              body: "Torso secured. Feels empty inside.",
+              'arm-left': "Left arm attached. Waving awkwardly.",
+              'arm-right': "Right arm functional. Points at you.",
+              'leg-left': "Leg installed. But why walk?",
+              'leg-right': "Second leg added. Now bipedal. Congrats."
+            };
+            document.getElementById('cl').textContent = m[type];
+          };
+
+          zones.forEach(z => {
+            z.addEventListener('dragover', e => e.preventDefault());
+            z.addEventListener('drop', e => {
+              e.preventDefault();
+              const pt = e.dataTransfer.getData('text/plain');
+              const img = document.querySelector(`.draggable-part[data-part="${pt}"]`);
+              if (window.placedParts.has(pt)) return;
+              img.style.position = 'absolute'; img.style.pointerEvents = 'none';
+              z.appendChild(img);
+              window.placedParts.add(pt);
+              logMsg(pt);
+              if (window.placedParts.size === 6) {
+                clearInterval(T);
+                setTimeout(() => go(G.SUCCESS), 1000);
+              }
+            });
+          });
+
+          T = setInterval(() => {
+            tL--;
+            document.getElementById('timer').textContent = tL;
+            if (tL <= 10) document.getElementById('timer').style.color = '#f00';
+            if (tL <= 0) { clearInterval(T); go(G.FAILURE); }
+          }, 1000);
+          break;
+
+        case G.SUCCESS:
+          r(`<div class="screen success-screen">
+            <div class="result-header">🎉 CONGRATULATIONS 🎉</div>
+            <div class="robot-container">
+              <img src="assets/images/robot/face-neutral.png" class="robot-face">
+            </div>
+            <div class="result-message">
+              <p>You rebuilt the robot.</p>
+              <p>It still hates you.</p>
+              <p><strong>"You win... for now."</strong></p>
+            </div>
+            <div class="result-actions">
+              <button class="btn-share" id="ts">Tweet Your Victory</button>
+              <button class="btn-next" id="jt">Join the Cult</button>
+            </div>
+            <div class="easter-egg-sound"><small class="tiny">(Press Z for joy)</small></div>
+          </div>`);
+          document.getElementById('ts').onclick = () => { beep(800, 0.1); tweetResult(); };
+          document.getElementById('jt').onclick = () => window.open(' https://t.me/yourcultlink ', '_blank');
+          document.addEventListener('keydown', e => { if (e.key === 'z' || e.key === 'Z') beep(800, 0.1); });
+          break;
+
+        case G.FAILURE:
+          r(`<div class="screen failure-screen">
+            <div class="result-header">💥 SYSTEM CRITICAL 💥</div>
+            <div class="robot-container">
+              <img src="assets/images/robot/face-neutral.png" class="robot-face">
+              <div class="flames" style="position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:30px;animation:flicker 0.5s infinite;">🔥🔥🔥</div>
+            </div>
+            <div class="result-message">
+              <p>Your reconstruction FAILED.</p>
+              <p>The robot has ASCENDED.</p>
+              <p><strong>"Better luck next life."</strong></p>
+            </div>
+            <div class="result-actions">
+              <button class="btn-retry" id="rr">Retry (If You Dare)</button>
+              <button class="btn-surrender" id="gu">Give Up</button>
+            </div>
+          </div>`);
+          document.getElementById('rr').onclick = () => go(G.REBUILD);
+          document.getElementById('gu').onclick = () => {
+            c.innerHTML = '<div class="fake-delete"><p>Deleting user profile...</p><p>Erasing browser history...</p><p>Selling data to advertisers... ✔</p><p><i>Just kidding. You\'re still a bot.</i></p></div>';
+            setTimeout(() => go(G.BOOT), 2000);
+          };
+          break;
+      }
+    };
+
+    // Synthetic beep
+    function beep(freq = 400, dur = 0.1) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g).connect(ctx.destination);
+        o.frequency.setValueAtTime(freq, ctx.currentTime);
+        g.gain.setValueAtTime(0.05, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+        o.start();
+        o.stop(ctx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    // Tweet result
+    function tweetResult() {
+      const text = encodeURIComponent(`I rebuilt the cursed robot in 404CAPTCHA. It called me weak. #404CAPTCHA`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    }
+
+    // Easter Eggs
+    let k = [], K = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'], tb = '';
+    document.addEventListener('keydown', e => {
+      k.push(e.key); if (k.length > 10) k.shift();
+      if (k.join() === K.join()) {
+        alert("🎮 KONAMI UNLOCKED\nYou are now 37% more bot-like.\nPress OK to ascend.");
+        document.body.style.animation = 'glitch 0.3s infinite';
+        setTimeout(() => document.body.style.animation = '', 5000);
+        k = [];
+      }
+      if (e.altKey && e.key === 'z') {
+        alert("DEBUG MODE ENABLED\nAll systems exposed.\nPress Alt+Z again to exit.");
+      }
+      if (e.key.match(/^[a-zA-Z]$/) && S !== G.REBUILD) {
+        tb += e.key;
+        if (tb.slice(-8).toUpperCase() === 'ERROR404') {
+          setTimeout(() => go(G.REBUILD), 200);
+          tb = '';
+        }
+      }
+    });
+
+    // Right-click trap
+    document.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (Math.random() < 0.3) {
+        alert("RIGHT-CLICK DETECTED\nYou thought you were sneaky.\nThis site is made by a human who regrets everything.");
+      }
+    });
+
+    // Start game
+    go(G.BOOT);
+  </script>
+</body>
+</html>
