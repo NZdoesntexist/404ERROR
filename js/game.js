@@ -7,9 +7,8 @@ const GAME_STATES = {
   SUCCESS: 'success',
   FAILURE: 'failure'
 };
-
 let currentState = GAME_STATES.BOOT;
-const container = document.getElementById('game-container');
+const container = document.getElementById('game-container'); 
 
 // === GO TO STATE FUNCTION ===
 function goToState(state) {
@@ -42,33 +41,34 @@ function showBootScreen() {
   container.innerHTML = `
     <div class="screen">
       <pre class="bios-text">
-ROM BIOS VERSION 2.02
-Copyright © 1997 Cursed Technologies Inc.
-All rights reserved.
+        ROM BIOS VERSION 2.02
+        Copyright © 1997 Cursed Technologies Inc.
+        All rights reserved.
 
-Initializing Hardware...
- - CPU: Intel Pentium II 300MHz ✔
- - Memory: 64MB EDO DRAM ✔
- - Video: S3 Virge DX (640x480) ✔
- - HDD: Quantum Fireball 4.3GB ✔
- - Network: 56k Modem (Not Connected) ⚠
+        Initializing Hardware...
+        - CPU: Intel Pentium II 300MHz ✔
+        - Memory: 64MB EDO DRAM ✔
+        - Video: S3 Virge DX (640x480) ✔
+        - HDD: Quantum Fireball 4.3GB ✔
+        - Network: 56k Modem (Not Connected) ⚠
 
-Loading drivers...
- - HIMEM.SYS ✔
- - EMM386.EXE ✔
- - MOUST.SYS ❌ FAILED (Mouse not found)
- - IRONY.VXD ✔ (v4.0.666)
+        Loading drivers...
+        - HIMEM.SYS ✔
+        - EMM386.EXE ✔
+        - MOUST.SYS ❌ FAILED (Mouse not found)
+        - IRONY.VXD ✔ (v4.0.666)
 
-Starting Windows 95...
-KERNEL32.DLL: Loaded
-USER32.DLL: Loaded
-GDI.EXE: Loaded
-WINLOGON.EXE: Starting...
+        Starting Windows 95...
+        KERNEL32.DLL: Loaded
+        USER32.DLL: Loaded
+        GDI.EXE: Loaded
+        WINLOGON.EXE: Starting...
 
-<span class="blink">Press ANY KEY to continue...</span>
+        <span class="blink">Press ANY KEY to continue...</span>
       </pre>
     </div>
   `;
+}
 
   container.onclick = () => goToState(GAME_STATES.ERROR);
 }
@@ -340,11 +340,29 @@ function showSuccessScreen() {
         <button class="btn-share" id="tweet-result">Tweet Your Victory</button>
         <button class="btn-next" id="join-tg">Join the Cult</button>
       </div>
-      <div class="easter-egg-sound">
-        <small class="tiny">(Press Z for joy)</small>
+      <div class="easter-egg-sound"><small class="tiny">(Press Z for joy)</small></div>
+    </div>`;
+}
+
+function showFailureScreen() {
+  container.innerHTML = `
+    <div class="screen failure-screen">
+      <div class="result-header">💥 SYSTEM CRITICAL 💥</div>
+      <div class="robot-container">
+        <img src="assets/images/robot/face-neutral.png" class="robot-face">
+        <div class="flames">🔥🔥🔥</div>
       </div>
-    </div>
-  `;
+      <div class="result-message">
+        <p>Your reconstruction FAILED.</p>
+        <p>The robot has ASCENDED.</p>
+        <p><strong>"Better luck next life."</strong></p>
+      </div>
+      <div class="result-actions">
+        <button class="btn-retry" id="retry-btn">Retry (If You Dare)</button>
+        <button class="btn-surrender" id="give-up">Give Up</button>
+      </div>
+    </div>`;
+}
 
   document.getElementById('tweet-result').addEventListener('click', () => {
     playBeep(800, 0.1);
