@@ -131,7 +131,9 @@ WINLOGON.EXE: Starting...
         break;
 
       case G.SUCCESS:
-        r(`<div class="screen success-screen"><div class="result-header">🎉 CONGRATULATIONS 🎉</div><div class="robot-container"><img src="assets/images/robot/faces/happy.png" class="robot-face-large"></div><div class="result-message"><p>You rebuilt the robot.</p><p>It still hates you.</p><p><strong>"You win... for now."</strong></p></div><div class="result-actions"><button class="btn-share" id="ts">Tweet Your Victory</button><button class="btn-next" id="jt">Join the Cult</button></div><div class="easter-egg-sound"><small class="tiny">(Press Z for joy)</small></div></div>`);
+        r(`<div class="screen success-screen"><div class="result-header">🎉 CONGRATULATIONS 🎉</div>// Keep the same face, but change color filter or add emoji overlay
+document.getElementById('rf').style.filter = 'hue-rotate(90deg)'; // green → yellow-ish
+// Or just log a funny message — the robot doesn't need to smile<div class="result-message"><p>You rebuilt the robot.</p><p>It still hates you.</p><p><strong>"You win... for now."</strong></p></div><div class="result-actions"><button class="btn-share" id="ts">Tweet Your Victory</button><button class="btn-next" id="jt">Join the Cult</button></div><div class="easter-egg-sound"><small class="tiny">(Press Z for joy)</small></div></div>`);
         document.getElementById('ts').onclick=playDing;
         document.getElementById('jt').onclick=()=>window.open(' https://t.me/yourcultlink ','_blank');
         document.addEventListener('keydown',e=>{if(e.key==='z'||e.key==='Z')playDing();});
