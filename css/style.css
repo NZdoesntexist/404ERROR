@@ -1,0 +1,448 @@
+/* === RESET & BASE === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DOS VGA', monospace;
+  background-color: #0d0d0d;
+  color: #0f0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* === CRT SCREEN EFFECT === */
+.crt-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 0, 0.03),
+    rgba(0, 255, 0, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.15;
+  animation: scanline-move 2s linear infinite;
+}
+
+@keyframes scanline-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 2px; }
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, #000 90%);
+  pointer-events: none;
+  z-index: 99;
+}
+
+/* === GAME CONTAINER === */
+#game-container {
+  width: 640px;
+  height: 480px;
+  background-color: #000;
+  border: 8px solid #333;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+/* === SCREEN BASE === */
+.screen {
+  background-color: #000;
+  color: #fff;
+  font-family: 'DOS VGA', monospace;
+  height: 100%;
+  padding: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+/* === BOOT SCREEN === */
+.bios-text {
+  font-size: 14px;
+  white-space: pre;
+  margin-top: 20px;
+  line-height: 1.4;
+}
+
+.blink {
+  color: #0f0;
+  animation: blink-animation 1s infinite;
+}
+
+@keyframes blink-animation {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* === ERROR SCREEN === */
+.error-header {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #f00;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+.error-message {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.glitch {
+  color: #0f0;
+  animation: glitch-animation 3s infinite;
+}
+
+@keyframes glitch-animation {
+  0% { transform: translate(0); }
+  2% { transform: translate(-2px, -2px); }
+  4% { transform: translate(2px, 2px); }
+  6% { transform: translate(-2px, 2px); }
+  8% { transform: translate(2px, -2px); }
+  10% { transform: translate(0); }
+  100% { transform: translate(0); }
+}
+
+.robot-face {
+  width: 160px;
+  height: 100px;
+  image-rendering: pixelated;
+}
+
+.btn-primary {
+  background-color: #00f;
+  color: white;
+  border: 2px solid #00aaff;
+  padding: 8px 16px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px 0;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #00aaff;
+  box-shadow: 0 0 10px rgba(0, 100, 255, 0.5);
+}
+
+.small-text {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* === CAPTCHA TRAP === */
+.captcha-header {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: yellow;
+}
+
+.captcha-instructions {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.captcha-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0 auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+.captcha-item {
+  aspect-ratio: 1;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #111;
+  color: #c00;
+  padding: 5px;
+}
+
+.btn-cancel {
+  background-color: #333;
+  color: #ccc;
+  border: 2px solid #666;
+  padding: 8px 16px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.captcha-footer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.hidden-button {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.btn-fate {
+  background-color: black;
+  color: #0f0;
+  border: 1px dashed #0f0;
+  padding: 10px 20px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  animation: blink-pulse 2s infinite;
+}
+
+@keyframes blink-pulse {
+  0%, 49% { opacity: 0.6; }
+  50%, 100% { opacity: 1; }
+}
+
+/* === POPUP ALERTS === */
+.popup-alert {
+  position: fixed;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  background: linear-gradient(to bottom, #f00, #a00);
+  border: 3px solid yellow;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: white;
+}
+
+.popup-title {
+  background: black;
+  color: yellow;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.popup-body {
+  padding: 15px;
+  text-align: center;
+}
+
+.popup-close {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: #000;
+  color: white;
+  border: 1px solid white;
+  cursor: pointer;
+}
+
+/* === REBUILD SCREEN === */
+.rebuild-header {
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: yellow;
+}
+
+.robot-bench {
+  flex-grow: 1;
+  background-color: #222;
+  border: 2px solid #444;
+  position: relative;
+  margin: 0 auto;
+  width: 520px;
+  height: 400px;
+  overflow: hidden;
+}
+
+.part-zone {
+  position: absolute;
+  border: 1px dashed rgba(0, 255, 0, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.parts-bin {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.draggable-part {
+  width: 60px;
+  height: auto;
+  cursor: grab;
+  image-rendering: pixelated;
+  transition: transform 0.1s;
+}
+
+.draggable-part:hover {
+  transform: scale(1.1);
+}
+
+.robot-face-container {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.console-log {
+  font-size: 12px;
+  background-color: #111;
+  color: #0f0;
+  border: 1px solid #333;
+  padding: 8px;
+  text-align: center;
+  min-height: 20px;
+  margin-top: 5px;
+}
+
+/* === SUCCESS & FAILURE === */
+.success-screen {
+  color: #0f0;
+}
+
+.failure-screen {
+  color: #f00;
+}
+
+.result-header {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.robot-face-large {
+  width: 200px;
+  height: 125px;
+  image-rendering: pixelated;
+}
+
+.flames {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+  animation: flicker 0.5s infinite alternate;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.result-message {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-share {
+  background-color: #1da1f2;
+  color: white;
+  border: 2px solid #1a95da;
+  padding: 10px 20px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-next, .btn-retry {
+  background-color: #00f;
+  color: white;
+  border: 2px solid #00aaff;
+  padding: 10px 20px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-surrender {
+  background-color: #333;
+  color: #ccc;
+  border: 2px solid #666;
+  padding: 10px 20px;
+  font-family: 'DOS VGA', monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tiny {
+  font-size: 10px;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* === FAKE DELETE SCREEN === */
+.fake-delete {
+  background-color: black;
+  color: yellow;
+  font-family: 'DOS VGA', monospace;
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 2;
+}
+
+/* === GLITCH EFFECT (NO GIF NEEDED) === */
+.glitch-effect {
+  animation: glitch-flicker 0.5s infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 90%, 100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  91%, 95%, 98% {
+    opacity: 0.3;
+    transform: translateX(1px);
+  }
+}
