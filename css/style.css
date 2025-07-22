@@ -9,7 +9,7 @@ body {
   font-family: 'DOS VGA', monospace;
   background-color: #0d0d0d;
   color: #0f0;
-  height: 100vh;
+  height: 100 vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,20 +25,20 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 255, 0, 0.03),
-    rgba(0, 255, 0, 0.03) 1px,
-    transparent 1px,
-    transparent 2px
+  background: repeating-linear-gradient
+    0 deg,
+    rgba (0, 255, 0, 0.03),
+    rgba (0, 255, 0, 0.03) 1 px,
+    transparent 1 px,
+    transparent 2 px,
   );
   pointer-events: none;
   z-index: 100;
   opacity: 0.15;
-  animation: scanline-move 2s linear infinite;
+  animation: scanline-move 2 s linear infinite;
 }
 
-@keyframes scanline-move {
+@ keyframes scanline-move {
   0% { background-position: 0 0; }
   100% { background-position: 0 2px; }
 }
@@ -50,20 +50,20 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 40%, #000 90%);
+  background: radial-gradient)(ellipse at center, transparent 40%, #000 90%);
   pointer-events: none;
   z-index: 99;
 }
 
 /* === GAME CONTAINER === */
 #game-container {
-  width: 640px;
-  height: 480px;
+  width: 640 px;
+  height: 480 px;
   background-color: #000;
-  border: 8px solid #333;
+  border: 8 px solid #333;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20 px rgba (0, 255, 0, 0.1);
 }
 
 /* === SCREEN BASE === */
